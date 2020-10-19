@@ -1,0 +1,29 @@
+template:
+  name: mlopspython
+  use_case: csv-classfication
+variable_groups:
+  - variable_group: devopsforai-aml-vg
+    key_values:
+      - BASE_NAME: mfg
+      - LOCATION: centralus
+      - RESOURCE_GROUP: mfgmlops-RG
+      - WORKSPACE_NAME: mfgmlops-AML-WS
+      - AZURE_RM_SVC_CONNECTION: azure-resource-connection
+      - WORKSPACE_SVC_CONNECTION: aml-workspace-connection
+      - ACI_DEPLOYMENT_NAME: mfgmlops-aci
+service_connections:
+  - service_connection: azure-resource-connection
+  - service_connection: aml-workspace-connection
+pipelines:
+  - pipeline: IAC
+    file: environment_setup/iac-create-environment-pipeline-arm.yml
+  - pipeline: Model-Train-Register-CI
+    file: .pipelines/diabetes_regression-ci.yml
+  - pipeline: CD
+    file: .pipelines/diabetes_regression-cd.yml
+steps:
+  - step: 1_Create_Project
+  - step: 2_Import_Repo
+  - step: 3_Create_Variable_Groups
+  - step: 4_Create_Pipelines
+  - Step: 5_Create_Service_Connections

@@ -1,0 +1,13 @@
+projects:
+  - project: MLOpsPython
+    description: 'CSV files, classfication'
+    git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsPython.git
+    template: mlopspython_tmp.yml
+  - project: MLOpsImgClass
+    description: 'Image files, classfication'
+    git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
+    template: img_class_tmp.yml
+  - project: MLOpsManyModels
+    description: 'Multiple models trained by using CSV files, regression/forecast'
+    git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsManyModels
+    template: many_models_tmp.yml
