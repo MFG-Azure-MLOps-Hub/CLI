@@ -7,6 +7,10 @@ projects:
     description: 'Image files, classfication'
     git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
     template: img_class_tmp.yml
+  - project: MLOpsObjectDetection_ssd_resnet50_v1_fpn
+    description: 'Image files, object detection based on ssd_resnet50_v1_fpn'
+    git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsObjectDetection_ssd_resnet50_v1_fpn.git
+    template: obj_detection_tmp.yml
   - project: MLOpsManyModels
     description: 'Multiple models trained by using CSV files, regression/forecast'
     git_url: https://github.com/MFG-Azure-MLOps-Hub/MLOpsManyModels

@@ -1,30 +1,26 @@
 template:
-  name: many-models
-  use_case: csv-regression-forecast
+  name: MLOpsObjectDetection_ssd_resnet50_v1_fpn
+  use_case: image-object-detection
 variable_groups:
   - variable_group: devopsforai-aml-vg
     key_values:
-      - BASE_NAME: mmo
+      - BASE_NAME: obd
       - LOCATION: centralus
-      - RESOURCE_GROUP: mmomlops-RG
-      - WORKSPACE_NAME: mmomlops-AML-WS
+      - RESOURCE_GROUP: obdmlops-RG
+      - WORKSPACE_NAME: obdmlops-AML-WS
       - AZURE_RM_SVC_CONNECTION: azure-resource-connection
       - WORKSPACE_SVC_CONNECTION: aml-workspace-connection
-      - ACI_DEPLOYMENT_NAME: mmomlops-aci
+      - ACI_DEPLOYMENT_NAME: obdmlops-aci
 service_connections:
   - service_connection: azure-resource-connection
   - service_connection: aml-workspace-connection
 pipelines:
   - pipeline: IAC
     file: environment_setup/iac-create-environment-pipeline-arm.yml
-  - pipeline: Prepare-Data
-    file: .pipelines/ff-prepare-data.yml
   - pipeline: Model-Train-Register-CI
-    file: .pipelines/ff-build-train.yml
-  - pipeline: CD_ACI
-    file: .pipelines/ff-deploy-aci.yml
-  - pipeline: CD_WebApp
-    file: .pipelines/ff-deploy-webapp.yml
+    file: .pipelines/obj_detect-ci.yml
+  - pipeline: CD
+    file: .pipelines/obj_detect-cd.yml
 steps:
   - step: 1_Create_Project
   - step: 2_Import_Repo

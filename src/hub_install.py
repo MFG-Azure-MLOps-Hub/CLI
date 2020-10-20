@@ -170,7 +170,7 @@ tenant_id = result["homeTenantId"]
 # print(subcription_id)
 # print(tenant_id)
 
-sp_name = f"gary-mlops-{uuid.uuid4()}"
+sp_name = f"mfg-mlops-{uuid.uuid4()}"
 command = f"az ad sp create-for-rbac --name http://{sp_name} --scopes /subscriptions/{subcription_id}"
 stdout, stderr = cli_run(command)
 print_result(stdout, stderr)
