@@ -76,7 +76,7 @@ def init_logger():
 
 
 # python hub_install.py --org_url https://dev.azure.com/ganwa
-# --project_name Jabil
+# --project_name mlopsproj
 # --source_repo_url https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
 parser = argparse.ArgumentParser("MLOps Hub Install")
 parser.add_argument(
@@ -170,7 +170,7 @@ tenant_id = result["homeTenantId"]
 # print(subcription_id)
 # print(tenant_id)
 
-sp_name = f"gary-Jabil-{uuid.uuid4()}"
+sp_name = f"gary-mlops-{uuid.uuid4()}"
 command = f"az ad sp create-for-rbac --name http://{sp_name} --scopes /subscriptions/{subcription_id}"
 stdout, stderr = cli_run(command)
 print_result(stdout, stderr)
