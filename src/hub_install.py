@@ -6,7 +6,7 @@ import logging
 import os
 import uuid
 
-# Function to urn az cli
+# Function to run az cli
 
 
 def cli_run(command):
