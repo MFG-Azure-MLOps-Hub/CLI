@@ -165,7 +165,7 @@ command = "az account show"
 stdout, stderr = cli_run(command)
 result = json.loads(stdout)
 subcription_id = result["id"]
-tenant_id = result["homeTenantId"]
+tenant_id = result["tenantId"]
 subcription_name = ["name"]
 # print(subcription_id)
 # print(tenant_id)
