@@ -166,9 +166,8 @@ stdout, stderr = cli_run(command)
 result = json.loads(stdout)
 subcription_id = result["id"]
 tenant_id = result["tenantId"]
-subcription_name = ["name"]
-# print(subcription_id)
-# print(tenant_id)
+subcription_name = result["name"]
+environment = result["environmentName"]
 
 sp_name = f"mfg-mlops-{uuid.uuid4()}"
 command = f"az ad sp create-for-rbac --name http://{sp_name} --scopes /subscriptions/{subcription_id}"
@@ -177,6 +176,8 @@ print_result(stdout, stderr)
 result = json.loads(stdout)
 app_id = result["appId"]
 password = result["password"]
+
+
 
 os.environ["AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY"] = password
 command = f'az devops service-endpoint azurerm create --azure-rm-service-principal-id {app_id} --azure-rm-subscription-id {subcription_id} --azure-rm-subscription-name "{subcription_name}" --azure-rm-tenant-id {tenant_id} --name {azure_resource_connection} -p {project_name} --org {org_url}'
@@ -196,3 +197,95 @@ logging.info(
     f"Created service connection:{azure_resource_connection} in {project_name}.")
 
 logging.info('Installation finished.')
+
+# Run IaC pipeline
+pl_name = "IAC"
+command = f"az pipelines run --name {pl_name} --org {org_url} -p {project_name}"
+logging.info(command)
+stdout, stderr = cli_run(command)
+if stdout is not None and stdout != "":
+    logging.info(stdout)
+if stderr is not None and stderr != "":
+    logging.info(stderr)
+result = json.loads(stdout)
+pl_id = result["id"]
+logging.info(f"Pipeline:{pl_id} {pl_name} started.")
+
+import time
+command = f"az pipelines build list --org {org_url} -p {project_name} --query [?id==`{pl_id}`].[id,result,status] -o tsv"
+result = "N/A"
+status = "N/A"
+count = 0
+while 1:
+    stdout, stderr = cli_run(command)
+    if stdout is not None and stdout != "":
+        pipeline = stdout.split()
+        result = pipeline[1]
+        status = pipeline[2]
+    if stderr is not None and stderr != "":
+        logging.info(stderr)
+    if status == "completed":
+        break
+    else:
+        logging.info(f"Pipeline:{pl_id} {pl_name} status:{status}.")
+    time.sleep(10)
+    count = count + 1
+    if count == 60:
+        break
+
+
+if result == "succeeded" and status == "completed":
+    logging.info(f"Pipeline:{pl_id} {pl_name} status:{status}.")
+
+# Create service connection 'aml-workspace-connection'
+RESOURCE_GROUP = yml['variable_groups'][0]['key_values'][2]['RESOURCE_GROUP']
+WORKSPACE_NAME = yml['variable_groups'][0]['key_values'][3]['WORKSPACE_NAME']
+WORKSPACE_SVC_CONNECTION  = yml['variable_groups'][0]['key_values'][5]['WORKSPACE_SVC_CONNECTION']
+LOCATION = yml['variable_groups'][0]['key_values'][1]['LOCATION']
+
+def process_json():
+    file_in = open("./configuration.json", "r")
+    file_out = open("./configuration.temp.json", "w")
+    # load data to json_data variable
+    json_data = json.load(file_in)
+    # print (json_data)
+    # print ("after update  --->")
+    # print (type(json_data))
+    # Change configuration data
+    json_data["authorization"]["parameters"]["tenantid"] = tenant_id
+    json_data["authorization"]["parameters"]["scope"] = "/subscriptions/{subcription_id}/resourcegroups/{RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/workspaces/{WORKSPACE_NAME}"
+    json_data["data"]["environment"] = environment
+    json_data["data"]["subscriptionId"] = subcription_id
+    json_data["data"]["subscriptionName"] = subcription_name
+    json_data["data"]["resourceGroupName"] = RESOURCE_GROUP
+    json_data["data"]["mlWorkspaceName"] = WORKSPACE_NAME
+    json_data["data"]["mlWorkspaceLocation"] = LOCATION
+    json_data["name"] = WORKSPACE_SVC_CONNECTION
+    # print (json_data)
+    # write to new file
+    file_out.write(json.dumps(json_data))
+    file_in.close()
+    file_out.close()
+
+process_json()
+command = f'az devops service-endpoint create --service-endpoint-configuration configuration.temp.json -p {project_name} --org {org_url}'
+stdout, stderr = cli_run(command)
+os.remove("./configuration.temp.json")
+print_result(stdout, stderr)
+
+# Grant service connection access to all of the pipelines
+command = f"az devops service-endpoint list --org {org_url} -p {project_name} --query \"[?name=='{WORKSPACE_SVC_CONNECTION}'].id\" -o tsv"
+stdout, stderr = cli_run(command)
+print_result(stdout, stderr)
+se_id = stdout.strip()
+
+time.sleep(2.5)
+command = f"az devops service-endpoint update --id {se_id} --enable-for-all true --org {org_url} -p {project_name}"
+stdout, stderr = cli_run(command)
+print_result(stdout, stderr)
+logging.info(
+    f"Created service connection:{WORKSPACE_SVC_CONNECTION} in {project_name}.")
+
+logging.info('Installation finished.')
+
+subcription_name = ["name"]

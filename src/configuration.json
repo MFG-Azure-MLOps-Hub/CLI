@@ -1,0 +1,41 @@
+{
+    "authorization": {
+        "parameters": {
+            "tenantid": "",
+            "serviceprincipalid": "",
+            "serviceprincipalkey": "",
+            "authenticationType": "spnKey",
+            "scope": ""
+        },
+        "scheme": "ServicePrincipal"
+    },
+    "createdBy": {},
+    "data": {
+        "environment": "",
+        "scopeLevel": "AzureMLWorkspace",
+        "subscriptionId": "",
+        "subscriptionName": "",
+        "resourceGroupName": "",
+        "mlWorkspaceName": "",
+        "mlWorkspaceLocation": "",
+        "managementGroupId": "",
+        "managementGroupName": "",
+        "oboAuthorization": "",
+        "creationMode": "Automatic",
+        "azureSpnRoleAssignmentId": "",
+        "azureSpnPermissions": "",
+        "spnObjectId": "",
+        "appObjectId": "",
+        "resourceId": ""
+    },
+    "isShared": false,
+    "name": "",
+    "owner": "library",
+    "type": "azurerm",
+    "url": "https://management.azure.com/",
+    "administratorsGroup": null,
+    "description": "",
+    "groupScopeId": null,
+    "operationStatus": null,
+    "readersGroup": null
+}
