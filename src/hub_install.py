@@ -253,7 +253,7 @@ def process_json():
     # print (type(json_data))
     # Change configuration data
     json_data["authorization"]["parameters"]["tenantid"] = tenant_id
-    json_data["authorization"]["parameters"]["scope"] = "/subscriptions/{subcription_id}/resourcegroups/{RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/workspaces/{WORKSPACE_NAME}"
+    json_data["authorization"]["parameters"]["scope"] = f"/subscriptions/{subcription_id}/resourcegroups/{RESOURCE_GROUP}/providers/Microsoft.MachineLearningServices/workspaces/{WORKSPACE_NAME}"
     json_data["data"]["environment"] = environment
     json_data["data"]["subscriptionId"] = subcription_id
     json_data["data"]["subscriptionName"] = subcription_name
@@ -273,13 +273,13 @@ stdout, stderr = cli_run(command)
 os.remove("./configuration.temp.json")
 print_result(stdout, stderr)
 
+time.sleep(10)
 # Grant service connection access to all of the pipelines
 command = f"az devops service-endpoint list --org {org_url} -p {project_name} --query \"[?name=='{WORKSPACE_SVC_CONNECTION}'].id\" -o tsv"
 stdout, stderr = cli_run(command)
 print_result(stdout, stderr)
 se_id = stdout.strip()
 
-time.sleep(2.5)
 command = f"az devops service-endpoint update --id {se_id} --enable-for-all true --org {org_url} -p {project_name}"
 stdout, stderr = cli_run(command)
 print_result(stdout, stderr)
