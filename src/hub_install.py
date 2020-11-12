@@ -6,11 +6,10 @@ import logging
 import os
 import uuid
 
+
 # Function to run az cli
-
-
 def cli_run(command):
-    print(command)
+    logging.info(command)
     run = subprocess.run(
         command,
         shell=True,
@@ -43,7 +42,7 @@ def pl_exit(pl_name):
 
 def print_result(stdout, stderr):
     if stdout is not None and stdout != "":
-        print(stdout)
+        logging.debug(stdout)
     if stderr is not None and stderr != "":
         # raise SystemExit(stderr)
         logging.warning(stderr)
@@ -69,7 +68,7 @@ def init_logger():
         format='%(asctime)s %(levelname)-8s %(message)s')
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
     # tell the handler to use this format
     console.setFormatter(formatter)
     logging.getLogger().addHandler(console)
@@ -177,8 +176,6 @@ result = json.loads(stdout)
 app_id = result["appId"]
 password = result["password"]
 
-
-
 os.environ["AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY"] = password
 command = f'az devops service-endpoint azurerm create --azure-rm-service-principal-id {app_id} --azure-rm-subscription-id {subcription_id} --azure-rm-subscription-name "{subcription_name}" --azure-rm-tenant-id {tenant_id} --name {azure_resource_connection} -p {project_name} --org {org_url}'
 stdout, stderr = cli_run(command)
@@ -196,17 +193,13 @@ print_result(stdout, stderr)
 logging.info(
     f"Created service connection:{azure_resource_connection} in {project_name}.")
 
-logging.info('Installation finished.')
-
-# Run IaC pipeline
+# Run IAC pipeline
+print("-" * 50)
+logging.info(f'Step 6. Running IAC Pipeline ...')
 pl_name = "IAC"
 command = f"az pipelines run --name {pl_name} --org {org_url} -p {project_name}"
-logging.info(command)
 stdout, stderr = cli_run(command)
-if stdout is not None and stdout != "":
-    logging.info(stdout)
-if stderr is not None and stderr != "":
-    logging.info(stderr)
+print_result(stdout, stderr)
 result = json.loads(stdout)
 pl_id = result["id"]
 logging.info(f"Pipeline:{pl_id} {pl_name} started.")
@@ -216,18 +209,22 @@ command = f"az pipelines build list --org {org_url} -p {project_name} --query [?
 result = "N/A"
 status = "N/A"
 count = 0
+s = ""
 while 1:
+    s = s + "."
     stdout, stderr = cli_run(command)
     if stdout is not None and stdout != "":
         pipeline = stdout.split()
         result = pipeline[1]
         status = pipeline[2]
     if stderr is not None and stderr != "":
-        logging.info(stderr)
+        logging.warning(stderr)
     if status == "completed":
+        # print(f"\r{s}")
         break
     else:
-        logging.info(f"Pipeline:{pl_id} {pl_name} status:{status}.")
+        print(f"Pipeline:{pl_id} {pl_name} status:{status}.")
+        # print(f"\r{s}",end="")
     time.sleep(10)
     count = count + 1
     if count == 60:
@@ -238,6 +235,8 @@ if result == "succeeded" and status == "completed":
     logging.info(f"Pipeline:{pl_id} {pl_name} status:{status}.")
 
 # Create service connection 'aml-workspace-connection'
+print("-" * 50)
+logging.info(f'Step 7. Creating service connection "aml-workspace-connection" ...')
 RESOURCE_GROUP = yml['variable_groups'][0]['key_values'][2]['RESOURCE_GROUP']
 WORKSPACE_NAME = yml['variable_groups'][0]['key_values'][3]['WORKSPACE_NAME']
 WORKSPACE_SVC_CONNECTION  = yml['variable_groups'][0]['key_values'][5]['WORKSPACE_SVC_CONNECTION']
@@ -287,5 +286,3 @@ logging.info(
     f"Created service connection:{WORKSPACE_SVC_CONNECTION} in {project_name}.")
 
 logging.info('Installation finished.')
-
-subcription_name = ["name"]
