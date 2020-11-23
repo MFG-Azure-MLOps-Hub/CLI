@@ -24,5 +24,5 @@ python hub_install.py  --project_name {project_name} --org_url {org_url} --sourc
 example, to deploy **MLOpsImgClass** as a template
 
 ```
-python hub_install.py  --org_url https://dev.azure.com/ganwa --project_name mlopsproj --source_repo_url https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
+python hub_install.py  --org_url https://dev.azure.com/your_org --project_name mlopsproj --source_repo_url https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
 ```
