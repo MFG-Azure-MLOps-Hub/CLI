@@ -40,6 +40,7 @@ def pl_exit(pl_name):
         return False
 
 
+# Print cli_run results
 def print_result(stdout, stderr):
     if stdout is not None and stdout != "":
         logging.debug(stdout)
@@ -61,6 +62,7 @@ def get_template(git_url):
     return template
 
 
+# Intialize the logger
 def init_logger():
     logging.basicConfig(
         filename='hub_install.log',
@@ -74,7 +76,7 @@ def init_logger():
     logging.getLogger().addHandler(console)
 
 
-# python hub_install.py --org_url https://dev.azure.com/ganwa
+# python hub_install.py --org_url https://dev.azure.com/your_org
 # --project_name mlopsproj
 # --source_repo_url https://github.com/MFG-Azure-MLOps-Hub/MLOpsImgClass.git
 parser = argparse.ArgumentParser("MLOps Hub Install")
@@ -272,12 +274,20 @@ stdout, stderr = cli_run(command)
 os.remove("./configuration.temp.json")
 print_result(stdout, stderr)
 
-time.sleep(10)
 # Grant service connection access to all of the pipelines
 command = f"az devops service-endpoint list --org {org_url} -p {project_name} --query \"[?name=='{WORKSPACE_SVC_CONNECTION}'].id\" -o tsv"
-stdout, stderr = cli_run(command)
-print_result(stdout, stderr)
-se_id = stdout.strip()
+count = 0
+se_id = None
+while 1:
+    stdout, stderr = cli_run(command)
+    print_result(stdout, stderr)
+    se_id = stdout.strip()
+    if se_id != None and se_id !="":
+        break
+    time.sleep(5)
+    count = count + 1
+    if count == 60:
+        break
 
 command = f"az devops service-endpoint update --id {se_id} --enable-for-all true --org {org_url} -p {project_name}"
 stdout, stderr = cli_run(command)
