@@ -5,7 +5,12 @@ The content of CLI
 2. **Deploy Template** - generate MlOps project in [Azure DevOps](http://dev.azure.com), including repo and CI/CD pipeline
 
 ## Install
-
+1. [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+2. Add the Azure DevOps Extension
+```
+az extension add --name azure-devops
+```
+3. Clone the repo of The CLI of Azure-MLOps Hub for Manufacturing
 ``` shell
 git clone https://github.com/MFG-Azure-MLOps-Hub/CLI.git
 ```

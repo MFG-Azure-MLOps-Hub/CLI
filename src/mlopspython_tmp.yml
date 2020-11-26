@@ -4,13 +4,13 @@ template:
 variable_groups:
   - variable_group: devopsforai-aml-vg
     key_values:
-      - BASE_NAME: mfgi
+      - BASE_NAME: mfgj
       - LOCATION: centralus
-      - RESOURCE_GROUP: mfgimlops-RG
-      - WORKSPACE_NAME: mfgimlops-AML-WS
+      - RESOURCE_GROUP: mfgjmlops-RG
+      - WORKSPACE_NAME: mfgjmlops-AML-WS
       - AZURE_RM_SVC_CONNECTION: azure-resource-connection
       - WORKSPACE_SVC_CONNECTION: aml-workspace-connection
-      - ACI_DEPLOYMENT_NAME: mfgimlops-aci
+      - ACI_DEPLOYMENT_NAME: mfgjmlops-aci
 service_connections:
   - service_connection: azure-resource-connection
   - service_connection: aml-workspace-connection

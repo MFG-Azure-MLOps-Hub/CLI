@@ -4,13 +4,13 @@ template:
 variable_groups:
   - variable_group: devopsforai-aml-vg
     key_values:
-      - BASE_NAME: imgj
+      - BASE_NAME: imgk
       - LOCATION: centralus
-      - RESOURCE_GROUP: imgjfmlops-RG
-      - WORKSPACE_NAME: imgjfmlops-AML-WS
+      - RESOURCE_GROUP: imgkmlops-RG
+      - WORKSPACE_NAME: imgkmlops-AML-WS
       - AZURE_RM_SVC_CONNECTION: azure-resource-connection
       - WORKSPACE_SVC_CONNECTION: aml-workspace-connection
-      - ACI_DEPLOYMENT_NAME: imgjfdmlops-aci
+      - ACI_DEPLOYMENT_NAME: imgkmlops-aci
 service_connections:
   - service_connection: azure-resource-connection
   - service_connection: aml-workspace-connection
